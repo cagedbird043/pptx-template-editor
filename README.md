@@ -1,8 +1,8 @@
 # pptx-template-editor
 
-A Codex-friendly PowerPoint template editing skill for `.pptx` decks.
+A Codex skill and Python toolkit for editing PowerPoint `.pptx` templates without rebuilding the deck from scratch.
 
-It focuses on the pragmatic workflow that works well for internal reporting decks:
+It is designed for the workflow most reporting decks actually need:
 
 - inspect an existing template and map slides, placeholders, text boxes, and images
 - compare a blank template with a finished deck to derive a reusable fill spec
@@ -14,6 +14,39 @@ It focuses on the pragmatic workflow that works well for internal reporting deck
 ## Why this exists
 
 Most reporting decks already have the right theme, layout, branding, and spacing. Rebuilding them from scratch is brittle. This skill keeps the existing `.pptx` structure and only edits the parts that usually change.
+
+## Install as a Codex skill
+
+If you want Codex to auto-discover and use this as a skill, copy this repository into your Codex skills directory.
+
+### Option 1: clone directly into `~/.codex/skills`
+
+```bash
+mkdir -p ~/.codex/skills
+git clone https://github.com/cagedbird043/pptx-template-editor.git ~/.codex/skills/pptx-template-editor
+```
+
+### Option 2: clone anywhere, then copy or symlink it
+
+```bash
+git clone https://github.com/cagedbird043/pptx-template-editor.git
+mkdir -p ~/.codex/skills
+ln -s "$(pwd)/pptx-template-editor" ~/.codex/skills/pptx-template-editor
+```
+
+After that, restart Codex so the new skill is picked up.
+
+## Install Python dependencies
+
+The scripts use a local virtual environment. From the repository root:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+If you installed this repo under `~/.codex/skills/pptx-template-editor`, the same commands work there too.
 
 ## Features
 
@@ -28,19 +61,25 @@ Most reporting decks already have the right theme, layout, branding, and spacing
 - `scripts/compose_deck.py`
   - run clone-and-fill in one step from a single YAML/JSON plan
 
-## Install dependencies
+## Use as a Codex skill
+
+Once the repo is under `~/.codex/skills/pptx-template-editor`, Codex can trigger it as a normal skill.
+
+- The skill definition is in `SKILL.md`
+- The UI metadata is in `agents/openai.yaml`
+- Generic examples live in `references/`
+
+You can also invoke the scripts manually if you prefer explicit commands.
+
+## Use as a standalone tool
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+VENV="$(pwd)/.venv/bin/python"
 ```
 
 ## Typical workflow
 
 ```bash
-VENV="$(pwd)/.venv/bin/python"
-
 "$VENV" scripts/inspect_pptx.py template.pptx --output template-map.yaml
 "$VENV" scripts/derive_fill_spec.py template.pptx filled-example.pptx fill-spec.yaml
 "$VENV" scripts/fill_template.py template.pptx fill-spec.yaml output.pptx
@@ -70,6 +109,9 @@ YAML reminder:
 
 - quote `text` values that contain `:` to avoid YAML parsing errors
 
-## Codex skill layout
+## Repository layout
 
-This repo is also structured as a Codex skill folder, so it can be dropped into `~/.codex/skills/pptx-template-editor` directly.
+- `SKILL.md`: Codex skill instructions
+- `agents/openai.yaml`: UI metadata for the skill
+- `scripts/`: executable tools
+- `references/`: reusable examples and workflow notes
