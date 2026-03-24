@@ -1,0 +1,4 @@
+interface:
+  display_name: "PPTX Template Editor"
+  short_description: "Inspect and fill PowerPoint templates while preserving layouts."
+  default_prompt: "Use this skill to inspect a .pptx template, map slides/placeholders, and generate a new PPTX by filling content into the template."
