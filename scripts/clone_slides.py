@@ -35,21 +35,11 @@ def clone_slide_rels(data: bytes) -> bytes:
     return etree.tostring(rels_root, xml_declaration=True, encoding="UTF-8", standalone="yes")
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Append cloned copies of existing slides to a PPTX by editing Open XML parts."
-    )
-    parser.add_argument("input_pptx", type=Path)
-    parser.add_argument("output_pptx", type=Path)
-    parser.add_argument(
-        "source_slides",
-        nargs="+",
-        type=int,
-        help="1-based slide numbers to clone and append in the given order.",
-    )
-    args = parser.parse_args()
+def clone_slides_file(input_pptx: Path, output_pptx: Path, source_slides: list[int]) -> None:
+    if not source_slides:
+        raise ValueError("source_slides cannot be empty")
 
-    with zipfile.ZipFile(args.input_pptx) as zin:
+    with zipfile.ZipFile(input_pptx) as zin:
         entries = {name: zin.read(name) for name in zin.namelist() if not name.endswith("/")}
 
     slide_nums = sorted(
@@ -72,7 +62,7 @@ def main() -> int:
     existing_slide_ids = [int(node.get("id")) for node in sld_id_list.findall("p:sldId", NS)]
     next_slide_id = (max(existing_slide_ids) if existing_slide_ids else 255) + 1
 
-    for source_slide in args.source_slides:
+    for source_slide in source_slides:
         slide_xml = f"ppt/slides/slide{source_slide}.xml"
         slide_rels = f"ppt/slides/_rels/slide{source_slide}.xml.rels"
         if slide_xml not in entries:
@@ -119,10 +109,26 @@ def main() -> int:
         content_types_root, xml_declaration=True, encoding="UTF-8", standalone="yes"
     )
 
-    with zipfile.ZipFile(args.output_pptx, "w", compression=zipfile.ZIP_DEFLATED) as zout:
+    with zipfile.ZipFile(output_pptx, "w", compression=zipfile.ZIP_DEFLATED) as zout:
         for name in sorted(entries):
             zout.writestr(name, entries[name])
 
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Append cloned copies of existing slides to a PPTX by editing Open XML parts."
+    )
+    parser.add_argument("input_pptx", type=Path)
+    parser.add_argument("output_pptx", type=Path)
+    parser.add_argument(
+        "source_slides",
+        nargs="+",
+        type=int,
+        help="1-based slide numbers to clone and append in the given order.",
+    )
+    args = parser.parse_args()
+
+    clone_slides_file(args.input_pptx, args.output_pptx, args.source_slides)
     print(args.output_pptx)
     return 0
 

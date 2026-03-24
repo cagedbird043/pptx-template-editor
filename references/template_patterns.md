@@ -24,6 +24,10 @@ Use `derive_fill_spec.py` to reverse engineer a reusable YAML/JSON spec from a b
 
 Use `clone_slides.py` first, then fill the appended slides.
 
+### One plan for the whole deck
+
+Use `compose_deck.py` when you want one YAML/JSON file to control slide cloning, text replacement, and image replacement together.
+
 ### Image swap without moving layout
 
 Target an existing picture shape and set `image_path` in the update spec.

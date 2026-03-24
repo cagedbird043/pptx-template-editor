@@ -1,0 +1,37 @@
+clone_append:
+  - 2
+  - 3
+slides:
+  - slide_number: 1
+    updates:
+      - target:
+          shape_name: Profile Photo
+        image_path: ./avatar.png
+  - slide_number: 6
+    updates:
+      - target:
+          shape_name: Title 1
+          placeholder_idx: 0
+        paragraphs:
+          - text: "Additional Objective"
+      - target:
+          shape_name: Content Placeholder 2
+          placeholder_idx: 1
+        paragraphs:
+          - text: "Objective 3: Expand deployment coverage"
+            bold: true
+          - text: Reused a cloned slide and filled it from the same compose plan.
+  - slide_number: 7
+    updates:
+      - target:
+          shape_name: Title 1
+          placeholder_idx: 0
+        paragraphs:
+          - text: Additional Result
+      - target:
+          shape_name: Content Placeholder 2
+          placeholder_idx: 1
+        paragraphs:
+          - text: "KR4: Repackage the workflow into one command"
+            bold: true
+          - text: Compose plans now support slide cloning, text replacement, and image replacement together.

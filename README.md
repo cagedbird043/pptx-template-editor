@@ -9,6 +9,7 @@ It focuses on the pragmatic workflow that works well for internal reporting deck
 - fill a template from YAML/JSON without disturbing the original theme or layout
 - replace existing image shapes in place
 - clone slides by editing Open XML parts directly when repeated sections are needed
+- drive the whole workflow from one composition plan
 
 ## Why this exists
 
@@ -24,6 +25,8 @@ Most reporting decks already have the right theme, layout, branding, and spacing
   - apply text and image updates to an existing template
 - `scripts/clone_slides.py`
   - append cloned copies of existing slides by editing Open XML package parts directly
+- `scripts/compose_deck.py`
+  - run clone-and-fill in one step from a single YAML/JSON plan
 
 ## Install dependencies
 
@@ -51,9 +54,21 @@ If one content slide needs to be repeated multiple times:
 
 Then inspect the expanded deck and fill the appended slides.
 
+Or do both in one step:
+
+```bash
+"$VENV" scripts/compose_deck.py template.pptx references/example_compose_plan.yaml output.pptx
+```
+
 ## Example fill spec
 
 See `references/example_fill_spec.yaml`.
+
+For the single-file workflow, see `references/example_compose_plan.yaml`.
+
+YAML reminder:
+
+- quote `text` values that contain `:` to avoid YAML parsing errors
 
 ## Codex skill layout
 

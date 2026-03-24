@@ -10,9 +10,9 @@ slides:
           shape_name: Content Placeholder 2
           placeholder_idx: 1
         paragraphs:
-          - text: Objective 1: Launch feature A
+          - text: "Objective 1: Launch feature A"
             bold: true
           - text: Delivered API, documentation, and rollout support.
-          - text: Objective 2: Improve platform stability
+          - text: "Objective 2: Improve platform stability"
             bold: true
           - text: Reduced incident volume and shortened recovery time.

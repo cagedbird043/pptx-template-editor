@@ -21,16 +21,7 @@ def apply_paragraphs(text_frame, paragraphs: list[dict]) -> None:
             run.font.bold = bool(paragraph_spec["bold"])
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Fill a PPTX template using a YAML or JSON spec.")
-    parser.add_argument("template", type=Path)
-    parser.add_argument("spec", type=Path)
-    parser.add_argument("output", type=Path)
-    args = parser.parse_args()
-
-    prs = load_prs(args.template)
-    spec = read_payload(args.spec)
-
+def apply_updates_to_presentation(prs, spec: dict) -> None:
     for slide_update in spec.get("slides", []):
         slide_number = int(slide_update["slide_number"])
         slide = prs.slides[slide_number - 1]
@@ -43,7 +34,22 @@ def main() -> int:
             if "image_path" in update:
                 replace_shape_image(slide, shape, Path(update["image_path"]))
 
-    prs.save(str(args.output))
+
+def fill_template_file(template_path: Path, spec: dict, output_path: Path) -> None:
+    prs = load_prs(template_path)
+    apply_updates_to_presentation(prs, spec)
+    prs.save(str(output_path))
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Fill a PPTX template using a YAML or JSON spec.")
+    parser.add_argument("template", type=Path)
+    parser.add_argument("spec", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+
+    spec = read_payload(args.spec)
+    fill_template_file(args.template, spec, args.output)
     print(args.output)
     return 0
 

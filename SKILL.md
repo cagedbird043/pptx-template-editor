@@ -20,7 +20,7 @@ Run the workflow in this order:
 1. Inspect the template structure.
 2. If a finished example exists, derive a reusable fill spec from it.
 3. Fill the template with that spec or with a hand-written YAML/JSON spec.
-4. If the deck needs repeated sections, clone slides before filling them.
+4. If the deck needs repeated sections, either clone slides first or use a single compose plan.
 5. Re-inspect or diff the generated deck before declaring success.
 
 ## Workflow
@@ -79,10 +79,10 @@ slides:
           shape_name: Content Placeholder 2
           placeholder_idx: 1
         paragraphs:
-          - text: Objective 1: Launch feature A
+          - text: "Objective 1: Launch feature A"
             bold: true
           - text: Delivered API, docs, and validation.
-          - text: Objective 2: Improve platform stability
+          - text: "Objective 2: Improve platform stability"
             bold: true
           - text: Reduced incident volume and improved diagnostics.
 ```
@@ -94,6 +94,7 @@ Rules:
 - `level` can be used for nested bullets when needed
 - `image_path` can replace an existing picture shape without moving it
 - the script edits existing shapes only; it does not redraw charts
+- quote `text` values that contain `:` so the YAML stays valid
 
 ### 4. Clone repeated slides when XML-level duplication is needed
 
@@ -113,7 +114,30 @@ Current guardrails:
 
 After cloning, inspect the new slide numbers and then run `fill_template.py` against the expanded deck.
 
-### 5. Validate the result
+### 5. Use a single compose plan for clone-and-fill workflows
+
+Use `scripts/compose_deck.py` when one YAML/JSON file should drive the entire workflow.
+
+```bash
+"$VENV" scripts/compose_deck.py template.pptx references/example_compose_plan.yaml output.pptx
+```
+
+`clone_append` lists source slides to append before any updates are applied:
+
+```yaml
+clone_append: [2, 2, 3]
+slides:
+  - slide_number: 6
+    updates:
+      - target:
+          shape_name: Title 1
+        paragraphs:
+          - text: "Objective 3"
+```
+
+This is the best default for automated generation because it keeps one source of truth instead of juggling an expanded intermediate deck plus a separate fill spec.
+
+### 6. Validate the result
 
 Use one of these checks:
 
@@ -148,6 +172,7 @@ For those cases, inspect first, then decide whether a raw Open XML fallback is t
 - `scripts/derive_fill_spec.py`: compare a blank template and a finished deck to derive reusable YAML/JSON updates
 - `scripts/fill_template.py`: apply text and image updates to a template and write a new `.pptx`
 - `scripts/clone_slides.py`: append cloned copies of existing slides by editing Open XML parts directly
+- `scripts/compose_deck.py`: clone slides and apply updates from one plan file
 - `scripts/_pptx_utils.py`: shared helpers for payload IO, image replacement, and shape targeting
 
 ### references/
